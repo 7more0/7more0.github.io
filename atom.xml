@@ -2,21 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://7more0.github.io</id>
     <title>7more0&apos;s Notes</title>
-    <updated>2020-09-04T10:52:05.601Z</updated>
+    <updated>2020-09-04T11:16:06.778Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://7more0.github.io"/>
     <link rel="self" href="https://7more0.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
+    <subtitle>It&apos;s all right to aspire to what you don&apos;t have, as long as you work hard for it.</subtitle>
     <logo>https://7more0.github.io/images/avatar.png</logo>
     <icon>https://7more0.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 7more0&apos;s Notes</rights>
     <entry>
         <title type="html"><![CDATA[树莓派远程桌面访问]]></title>
-        <id>https://7more0.github.io/post/test/</id>
-        <link href="https://7more0.github.io/post/test/">
+        <id>https://7more0.github.io/post/Raspberry1/</id>
+        <link href="https://7more0.github.io/post/Raspberry1/">
         </link>
-        <updated>2020-09-04T09:38:33.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="steps">Steps:</h1>
+        <updated>2020-04-04T09:38:33.000Z</updated>
+        <content type="html"><![CDATA[<!-- more -->
+<h1 id="steps">Steps:</h1>
 <ol>
 <li>Install xrdp package in raspberrypi ：sudo apt-get install xrdp.</li>
 <li>Remotely start xrdp service by: sudo /etc/init.d/xrdp restart.</li>
