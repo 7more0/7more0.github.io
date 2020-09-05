@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>文章归档 | 7more0&#39;s Notes</title>
+<title>Raspberrypi Remote Control And Stastic IP Configure | 7more0&#39;s Notes</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -18,7 +18,13 @@
 
 
 
-    <meta name="description" content="It&#39;s all right to aspire to what you don&#39;t have, as long as you work hard for it.">
+    <meta name="description" content="
+1. Remote control
+Steps:
+
+Install xrdp package in raspberrypi by：sudo apt-get install xrdp
+Remotely start xrdp service ..." />
+    <meta name="keywords" content="Raspberrypi" />
   </head>
   <body>
     <div id="app" class="main">
@@ -88,40 +94,51 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          
+          <div class="post-detail">
+            <h2 class="post-title">Raspberrypi Remote Control And Stastic IP Configure</h2>
+            <div class="post-date">2020-05-04</div>
+            
+            <div class="post-content" v-pre>
+              <!-- more -->
+<h1 id="1-remote-control">1. Remote control</h1>
+<h2 id="steps">Steps:</h2>
+<ol>
+<li>Install xrdp package in raspberrypi by：<code>sudo apt-get install xrdp</code></li>
+<li>Remotely start xrdp service by: <code>sudo /etc/init.d/xrdp restart</code></li>
+<li>Windows run mstsc.exe to connect raspberrypi.</li>
+</ol>
+<h1 id="2-static-ip-configure">2. Static IP configure</h1>
+<h2 id="steps-2">Steps:</h2>
+<ol>
+<li>Open configure file by: <code>sudo nano /etc/dhcpcd.conf</code></li>
+<li>Configure your stastic IP address：</li>
+</ol>
+<pre><code>   # Example static IP configuration:
+   #interface eth0              
+   #static ip_address=192.168.137.10
+   #static ip6_address=......
+   #static routers=192.168.1.1
+   #static domain_name_servers=192.168.1.1 8.8.8.8 .......
+</code></pre>
+<ol start="3">
+<li>Restart net service by: <code>sudo service networking restart</code></li>
+</ol>
 
-          <h2 class="archives-title">文章归档</h2>
-          <div class="archives-container">
+            </div>
             
-              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2020</h2>
-              
+              <div class="tag-container">
                 
-                  <article class="post">
-                    <a href="https://7more0.github.io/web-server-building-on-raspberrypinginxmysql/">
-                      <h2 class="post-title">
-                        Web Server Building On Raspberrypi (Nginx+MySQL)
-                      </h2>
-                    </a>
-                  </article>
+                  <a href="https://7more0.github.io/jia89nphh/" class="tag">
+                    Raspberrypi
+                  </a>
                 
-              
-                
-                  <article class="post">
-                    <a href="https://7more0.github.io/raspberrypi-remote-control-and-stastic-ip-configure/">
-                      <h2 class="post-title">
-                        Raspberrypi Remote Control And Stastic IP Configure
-                      </h2>
-                    </a>
-                  </article>
-                
-              
+              </div>
             
+            
+
+            
+
           </div>
-
-          <div class="pagination-container">
-  
-  
-</div>
 
         </div>
       </div>

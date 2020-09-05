@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Web Server Building On Raspberrypi (Nginx+MySQL) | 7more0&#39;s Notes</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://7more0.github.io/favicon.ico?v=1599274043495">
+<link rel="stylesheet" href="https://7more0.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="
+1. Install PHP, Nginx and MySQL
+Steps:
+
+Install PHP by:
+
+sudo aptitude install php7.0-fpm php7.0-cli php7.0-curl php7.0..." />
+    <meta name="keywords" content="Raspberrypi" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://7more0.github.io">
+        <img src="https://7more0.github.io/images/avatar.png?v=1599274043495" class="site-logo">
+        <h1 class="site-title">7more0&#39;s Notes</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      It's all right to aspire to what you don't have, as long as you work hard for it.
+    </div>
+    <div class="site-footer">
+      <h5>Powered by Gridea</h5> | <a class="rss" href="https://7more0.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Web Server Building On Raspberrypi (Nginx+MySQL)</h2>
+            <div class="post-date">2020-05-06</div>
+            
+            <div class="post-content" v-pre>
+              <!-- more -->
+<h1 id="1-install-php-nginx-and-mysql">1. Install PHP, Nginx and MySQL</h1>
+<h2 id="steps">Steps:</h2>
+<ol>
+<li>Install PHP by:</li>
+</ol>
+<pre><code>sudo aptitude install php7.0-fpm php7.0-cli php7.0-curl php7.0-gd php7.0-mcrypt php7.0-cgi php-mysql
+</code></pre>
+<ol start="2">
+<li>Install Nginx by: <code>sudo apt-get install nginx</code></li>
+</ol>
+<h2 id="notice">Notice:</h2>
+<ul>
+<li>if all module were installed sucessfully, you should be able to visit nginx root page by <code>http://yourRaspberrypiIP</code></li>
+<li>Make sure all php packages were correctly installed, or the database may won't work at all.</li>
+</ul>
+<h1 id="2-global-configuration-of-nginx-and-php">2. Global configuration of Nginx and PHP</h1>
+<h2 id="steps-2">Steps:</h2>
+<ol>
+<li>Open configuration file by: <code>sudo nano /etc/nginx/sites-available/default</code></li>
+<li>Switch the location block with following passage</li>
+</ol>
+<pre><code># old location block
+location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ =404;
+        }
+# new location block		
+location / {
+		index  index.html index.htm index.php default.html default.htm default.php;
+		}
+		 
+location ~\.php$ {
+    fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+    #fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
+</code></pre>
+<ol start="3">
+<li>Insert <code>index.php</code> into server_name parameter as described in configuration file</li>
+<li>Reload Nginx configuration and restart Nginx</li>
+</ol>
+<pre><code>sudo /etc/init.d/nginx reload
+sudo service nginx restart
+</code></pre>
+<h2 id="notice-2">Notice:</h2>
+<ul>
+<li>All web docs should be stored at <code>/var/www/html</code></li>
+<li>So far your website can be visited by <code>IP/correct path</code></li>
+</ul>
+<h1 id="3-site-specific-configuration">3. Site specific configuration</h1>
+<p>This part configure the port, root and path of specific site.</p>
+<h2 id="steps-3">Steps:</h2>
+<ol>
+<li>Create a new configuration file as following example and move it to <code>/etc/nginx/sites-available/</code></li>
+</ol>
+<pre><code>server{
+    listen 80;
+    root /var/www/html;
+    index index.php index.html index.htm index.nginx-debian.html;
+    server_name example.com;
+
+    location / {
+        try_files $uri/ = 404;
+    }
+    location ~ \.php${
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix: /var/run/php/php7.0-fpm.sock;
+    }
+    location ~ /\.ht{
+        deny all;
+    }
+}
+</code></pre>
+<ol start="2">
+<li>Enable your new server block by creating a symbolic link from your new server block configuration file (in the /etc/nginx/sites-available/ directory) to the /etc/nginx/sites-enabled/ directory, unlink default configuration file. (From official guide)</li>
+</ol>
+<pre><code>sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
+sudo unlink /etc/nginx/sites-enabled/default
+</code></pre>
+<ol start="3">
+<li>Test and deploy configuration by:</li>
+</ol>
+<pre><code>sudo nginx -t  
+sudo systemctl reload nginx
+</code></pre>
+<h2 id="notice-3">Notice:</h2>
+<ul>
+<li>Each site should has its own configuration file in <code>/etc/nginx/sites-enable</code>, in this way it's easier to manage multiple site configurations in one web server.</li>
+<li>Refer to <code>/var/log/nginx/error.log</code> if any error occurs.</li>
+</ul>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://7more0.github.io/jia89nphh/" class="tag">
+                    Raspberrypi
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://7more0.github.io/raspberrypi-remote-control-and-stastic-ip-configure/">
+                  <h3 class="post-title">
+                    Raspberrypi Remote Control And Stastic IP Configure
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
