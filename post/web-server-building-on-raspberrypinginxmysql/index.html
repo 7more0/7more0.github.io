@@ -1,0 +1,287 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Web Server Building On Raspberrypi (Nginx+MySQL) | 7more0&#39;s Notes</title>
+<link rel="shortcut icon" href="https://7more0.github.io/favicon.ico?v=1599273305488">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://7more0.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Web Server Building On Raspberrypi (Nginx+MySQL) | 7more0&#39;s Notes - Atom Feed" href="https://7more0.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+1. Install PHP, Nginx and MySQL
+Steps:
+
+Install PHP by:
+
+sudo aptitude install php7.0-fpm php7.0-cli php7.0-curl php7.0..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://7more0.github.io">
+  <img class="avatar" src="https://7more0.github.io/images/avatar.png?v=1599273305488" alt="">
+  </a>
+  <h1 class="site-title">
+    7more0&#39;s Notes
+  </h1>
+  <p class="site-description">
+    It's all right to aspire to what you don't have, as long as you work hard for it.
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/7more0" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Web Server Building On Raspberrypi (Nginx+MySQL)
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-05-06
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <!-- more -->
+<h1 id="1-install-php-nginx-and-mysql">1. Install PHP, Nginx and MySQL</h1>
+<h2 id="steps">Steps:</h2>
+<ol>
+<li>Install PHP by:</li>
+</ol>
+<pre><code>sudo aptitude install php7.0-fpm php7.0-cli php7.0-curl php7.0-gd php7.0-mcrypt php7.0-cgi php-mysql
+</code></pre>
+<ol start="2">
+<li>Install Nginx by: <code>sudo apt-get install nginx</code></li>
+</ol>
+<h2 id="notice">Notice:</h2>
+<ul>
+<li>if all module were installed sucessfully, you should be able to visit nginx root page by <code>http://yourRaspberrypiIP</code></li>
+<li>Make sure all php packages were correctly installed, or the database may won't work at all.</li>
+</ul>
+<h1 id="2-global-configuration-of-nginx-and-php">2. Global configuration of Nginx and PHP</h1>
+<h2 id="steps-2">Steps:</h2>
+<ol>
+<li>Open configuration file by: <code>sudo nano /etc/nginx/sites-available/default</code></li>
+<li>Switch the location block with following passage</li>
+</ol>
+<pre><code># old location block
+location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ =404;
+        }
+# new location block		
+location / {
+		index  index.html index.htm index.php default.html default.htm default.php;
+		}
+		 
+location ~\.php$ {
+    fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+    #fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
+</code></pre>
+<ol start="3">
+<li>Insert <code>index.php</code> into server_name parameter as described in configuration file</li>
+<li>Reload Nginx configuration and restart Nginx</li>
+</ol>
+<pre><code>sudo /etc/init.d/nginx reload
+sudo service nginx restart
+</code></pre>
+<h2 id="notice-2">Notice:</h2>
+<ul>
+<li>All web docs should be stored at <code>/var/www/html</code></li>
+<li>So far your website can be visited by <code>IP/correct path</code></li>
+</ul>
+<h1 id="3-site-specific-configuration">3. Site specific configuration</h1>
+<p>This part configure the port, root and path of specific site.</p>
+<h2 id="steps-3">Steps:</h2>
+<ol>
+<li>Create a new configuration file as following example and move it to <code>/etc/nginx/sites-available/</code></li>
+</ol>
+<pre><code>server{
+    listen 80;
+    root /var/www/html;
+    index index.php index.html index.htm index.nginx-debian.html;
+    server_name example.com;
+
+    location / {
+        try_files $uri/ = 404;
+    }
+    location ~ \.php${
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix: /var/run/php/php7.0-fpm.sock;
+    }
+    location ~ /\.ht{
+        deny all;
+    }
+}
+</code></pre>
+<ol start="2">
+<li>Enable your new server block by creating a symbolic link from your new server block configuration file (in the /etc/nginx/sites-available/ directory) to the /etc/nginx/sites-enabled/ directory, unlink default configuration file. (From official guide)</li>
+</ol>
+<pre><code>sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
+sudo unlink /etc/nginx/sites-enabled/default
+</code></pre>
+<ol start="3">
+<li>Test and deploy configuration by:</li>
+</ol>
+<pre><code>sudo nginx -t  
+sudo systemctl reload nginx
+</code></pre>
+<h2 id="notice-3">Notice:</h2>
+<ul>
+<li>Each site should has its own configuration file in <code>/etc/nginx/sites-enable</code>, in this way it's easier to manage multiple site configurations in one web server.</li>
+<li>Refer to <code>/var/log/nginx/error.log</code> if any error occurs.</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#1-install-php-nginx-and-mysql">1. Install PHP, Nginx and MySQL</a>
+<ul>
+<li><a href="#steps">Steps:</a></li>
+<li><a href="#notice">Notice:</a></li>
+</ul>
+</li>
+<li><a href="#2-global-configuration-of-nginx-and-php">2. Global configuration of Nginx and PHP</a>
+<ul>
+<li><a href="#steps-2">Steps:</a></li>
+<li><a href="#notice-2">Notice:</a></li>
+</ul>
+</li>
+<li><a href="#3-site-specific-configuration">3. Site specific configuration</a>
+<ul>
+<li><a href="#steps-3">Steps:</a></li>
+<li><a href="#notice-3">Notice:</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://7more0.github.io/post/Raspberry1/">
+              <h3 class="post-title">
+                Raspberrypi Remote Control And Stastic IP Configure
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  <h5>Powered by Gridea</h5>
+  <a class="rss" href="https://7more0.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

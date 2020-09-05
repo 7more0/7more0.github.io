@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://7more0.github.io</id>
     <title>7more0&apos;s Notes</title>
-    <updated>2020-09-04T11:30:22.165Z</updated>
+    <updated>2020-09-05T02:35:20.490Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://7more0.github.io"/>
     <link rel="self" href="https://7more0.github.io/atom.xml"/>
@@ -11,7 +11,108 @@
     <icon>https://7more0.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 7more0&apos;s Notes</rights>
     <entry>
-        <title type="html"><![CDATA[Raspberry Remote Control And Stastic IP Configure]]></title>
+        <title type="html"><![CDATA[Web Server Building On Raspberrypi (Nginx+MySQL)]]></title>
+        <id>https://7more0.github.io/post/web-server-building-on-raspberrypinginxmysql/</id>
+        <link href="https://7more0.github.io/post/web-server-building-on-raspberrypinginxmysql/">
+        </link>
+        <updated>2020-05-06T01:44:20.000Z</updated>
+        <content type="html"><![CDATA[<!-- more -->
+<h1 id="1-install-php-nginx-and-mysql">1. Install PHP, Nginx and MySQL</h1>
+<h2 id="steps">Steps:</h2>
+<ol>
+<li>Install PHP by:</li>
+</ol>
+<pre><code>sudo aptitude install php7.0-fpm php7.0-cli php7.0-curl php7.0-gd php7.0-mcrypt php7.0-cgi php-mysql
+</code></pre>
+<ol start="2">
+<li>Install Nginx by: <code>sudo apt-get install nginx</code></li>
+</ol>
+<h2 id="notice">Notice:</h2>
+<ul>
+<li>if all module were installed sucessfully, you should be able to visit nginx root page by <code>http://yourRaspberrypiIP</code></li>
+<li>Make sure all php packages were correctly installed, or the database may won't work at all.</li>
+</ul>
+<h1 id="2-global-configuration-of-nginx-and-php">2. Global configuration of Nginx and PHP</h1>
+<h2 id="steps-2">Steps:</h2>
+<ol>
+<li>Open configuration file by: <code>sudo nano /etc/nginx/sites-available/default</code></li>
+<li>Switch the location block with following passage</li>
+</ol>
+<pre><code># old location block
+location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ =404;
+        }
+# new location block		
+location / {
+		index  index.html index.htm index.php default.html default.htm default.php;
+		}
+		 
+location ~\.php$ {
+    fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+    #fastcgi_pass 127.0.0.1:9000;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+}
+</code></pre>
+<ol start="3">
+<li>Insert <code>index.php</code> into server_name parameter as described in configuration file</li>
+<li>Reload Nginx configuration and restart Nginx</li>
+</ol>
+<pre><code>sudo /etc/init.d/nginx reload
+sudo service nginx restart
+</code></pre>
+<h2 id="notice-2">Notice:</h2>
+<ul>
+<li>All web docs should be stored at <code>/var/www/html</code></li>
+<li>So far your website can be visited by <code>IP/correct path</code></li>
+</ul>
+<h1 id="3-site-specific-configuration">3. Site specific configuration</h1>
+<p>This part configure the port, root and path of specific site.</p>
+<h2 id="steps-3">Steps:</h2>
+<ol>
+<li>Create a new configuration file as following example and move it to <code>/etc/nginx/sites-available/</code></li>
+</ol>
+<pre><code>server{
+    listen 80;
+    root /var/www/html;
+    index index.php index.html index.htm index.nginx-debian.html;
+    server_name example.com;
+
+    location / {
+        try_files $uri/ = 404;
+    }
+    location ~ \.php${
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix: /var/run/php/php7.0-fpm.sock;
+    }
+    location ~ /\.ht{
+        deny all;
+    }
+}
+</code></pre>
+<ol start="2">
+<li>Enable your new server block by creating a symbolic link from your new server block configuration file (in the /etc/nginx/sites-available/ directory) to the /etc/nginx/sites-enabled/ directory, unlink default configuration file. (From official guide)</li>
+</ol>
+<pre><code>sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
+sudo unlink /etc/nginx/sites-enabled/default
+</code></pre>
+<ol start="3">
+<li>Test and deploy configuration by:</li>
+</ol>
+<pre><code>sudo nginx -t  
+sudo systemctl reload nginx
+</code></pre>
+<h2 id="notice-3">Notice:</h2>
+<ul>
+<li>Each site should has its own configuration file in <code>/etc/nginx/sites-enable</code>, in this way it's easier to manage multiple site configurations in one web server.</li>
+<li>Refer to <code>/var/log/nginx/error.log</code> if any error occurs.</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Raspberrypi Remote Control And Stastic IP Configure]]></title>
         <id>https://7more0.github.io/post/Raspberry1/</id>
         <link href="https://7more0.github.io/post/Raspberry1/">
         </link>
