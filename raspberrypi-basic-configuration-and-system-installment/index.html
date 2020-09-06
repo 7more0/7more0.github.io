@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>Raspberrypi Remote Control And Stastic IP Configure | 7more0&#39;s Notes</title>
+<title>Raspberrypi Basic Configuration And System Installment | 7more0&#39;s Notes</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -19,11 +19,11 @@
 
 
     <meta name="description" content="
-1. Remote control
+1. System Installment
 Steps:
 
-Install xrdp package in raspberrypi by：sudo apt-get install xrdp
-Remotely start xrdp service ..." />
+Write Raspberrypi system file into SD card by BalenaEtcher.
+Install bonjour service and i..." />
     <meta name="keywords" content="Raspberrypi" />
   </head>
   <body>
@@ -95,33 +95,61 @@ Remotely start xrdp service ..." />
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">Raspberrypi Remote Control And Stastic IP Configure</h2>
-            <div class="post-date">2019-08-09</div>
+            <h2 class="post-title">Raspberrypi Basic Configuration And System Installment</h2>
+            <div class="post-date">2019-08-06</div>
             
             <div class="post-content" v-pre>
               <!-- more -->
-<h1 id="1-remote-control">1. Remote control</h1>
+<h1 id="1-system-installment">1. System Installment</h1>
 <h2 id="steps">Steps:</h2>
 <ol>
-<li>Install xrdp package in raspberrypi by：<code>sudo apt-get install xrdp</code></li>
-<li>Remotely start xrdp service by: <code>sudo /etc/init.d/xrdp restart</code></li>
-<li>Windows run mstsc.exe to connect raspberrypi.</li>
+<li>Write Raspberrypi system file into SD card by BalenaEtcher.</li>
+<li>Install bonjour service and internet adapter(USB Ethernet/RNIDS Gadget) in Windows platform.</li>
+<li>Configure Raspberrypi system files.
+<ul>
+<li>Add <code>dtoverlay=dwc2</code>  in <code>config.txt</code></li>
+<li>Add <code>modules-load=dwc2,g_ether</code> behind <code>rootwait</code> in <code>cmdline.txt</code></li>
+<li>Add new empty file <code>ssh</code></li>
+</ul>
+</li>
+<li>Link Raspberrypi to pc and wait.</li>
 </ol>
-<h1 id="2-static-ip-configure">2. Static IP configure</h1>
+<h1 id="2-basic-configuration">2. Basic Configuration</h1>
 <h2 id="steps-2">Steps:</h2>
 <ol>
-<li>Open configure file by: <code>sudo nano /etc/dhcpcd.conf</code></li>
-<li>Configure your stastic IP address：</li>
-</ol>
-<pre><code>   # Example static IP configuration:
-   #interface eth0              
-   #static ip_address=192.168.137.10
-   #static ip6_address=......
-   #static routers=192.168.1.1
-   #static domain_name_servers=192.168.1.1 8.8.8.8 .......
+<li>
+<p>Switch timezone</p>
+<pre><code>sudo tzselect
 </code></pre>
-<ol start="3">
-<li>Restart net service by: <code>sudo service networking restart</code></li>
+<p>or</p>
+<pre><code>sudo dpkg-reconfigure tzdata
+</code></pre>
+<p>Internet time sync:</p>
+<pre><code>sudo timedatectl set-ntp true
+</code></pre>
+</li>
+<li>
+<p>Refresh source list<br>
+Software update:</p>
+<pre><code>deb http://mirrors.ustc.edu.cn/raspbian/raspbian/ stretch main contrib non-free rpi
+deb-src http://mirrors.ustc.edu.cn/raspbian/raspbian/ stretch main contrib non-free
+deb http://mirrors.aliyun.com/raspbian/raspbian/ stretch main contrib non-free rpi
+deb-src http://mirrors.aliyun.com/raspbian/raspbian/ stretch main contrib non-free rpi
+deb http://mirrors.tuna.tsinghua.edu.cn/raspbian/raspbian/ stretch main contrib non-free rpi
+deb-src http://mirrors.tuna.tsinghua.edu.cn/raspbian/raspbian/ stretch main contrib non-free rpi
+#deb http://mirrors.hustunique.com/raspbian/raspbian/ stretch main contrib non-free rpi
+#deb-src http://mirrors.hustunique.com/raspbian/raspbian/ stretch main contrib non-free rpi
+#deb http://mirrors.cqu.edu.cn/Raspbian/raspbian/ stretch main contrib non-free rpi
+#deb-src http://mirrors.cqu.edu.cn/Raspbian/raspbian/ stretch main contrib non-free rpi
+deb http://mirrors.zju.edu.cn/raspbian/raspbian/  stretch main contrib non-free rpi
+deb-src http://mirrors.zju.edu.cn/raspbian/raspbian/  stretch main contrib non-free rpi
+</code></pre>
+<p>System update:</p>
+<pre><code>deb http://mirrors.ustc.edu.cn/archive.raspberrypi.org/debian/ stretch main ui
+</code></pre>
+<pre><code>sudo apt-get update ; sudo apt-get upgrade ; sudo apt-get dist-upgrade ; sudo rpi-update
+</code></pre>
+</li>
 </ol>
 
             </div>
@@ -134,15 +162,6 @@ Remotely start xrdp service ..." />
                 
               </div>
             
-            
-              <div class="next-post">
-                <div class="next">下一篇</div>
-                <a href="https://7more0.github.io/raspberrypi-basic-configuration-and-system-installment/">
-                  <h3 class="post-title">
-                    Raspberrypi Basic Configuration And System Installment
-                  </h3>
-                </a>
-              </div>
             
 
             
