@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>Raspberrypi Remote Control And Stastic IP Configure | 7more0&#39;s Notes</title>
+<title>Implementation Guide For MyNote | 7more0&#39;s Notes</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -19,12 +19,14 @@
 
 
     <meta name="description" content="
-1. Remote control
+1. Install and configure MySQL
 Steps:
 
-Install xrdp package in raspberrypi by：sudo apt-get install xrdp
-Remotely start xrdp service ..." />
-    <meta name="keywords" content="Raspberrypi" />
+Install MySQL:
+
+sudo aptitude install mysql-server mysql-client  
+sudo mysql_sec..." />
+    <meta name="keywords" content="MyNote" />
   </head>
   <body>
     <div id="app" class="main">
@@ -95,41 +97,71 @@ Remotely start xrdp service ..." />
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">Raspberrypi Remote Control And Stastic IP Configure</h2>
-            <div class="post-date">2019-08-09</div>
+            <h2 class="post-title">Implementation Guide For MyNote</h2>
+            <div class="post-date">2020-06-21</div>
             
             <div class="post-content" v-pre>
               <!-- more -->
-<h1 id="1-remote-control">1. Remote control</h1>
+<h1 id="1-install-and-configure-mysql">1. Install and configure MySQL</h1>
 <h2 id="steps">Steps:</h2>
 <ol>
-<li>Install xrdp package in raspberrypi by：<code>sudo apt-get install xrdp</code></li>
-<li>Remotely start xrdp service by: <code>sudo /etc/init.d/xrdp restart</code></li>
-<li>Windows run mstsc.exe to connect raspberrypi.</li>
+<li>Install MySQL:</li>
 </ol>
-<h1 id="2-static-ip-configure">2. Static IP configure</h1>
+<pre><code>sudo aptitude install mysql-server mysql-client  
+sudo mysql_secure_installation
+</code></pre>
+<ol start="2">
+<li>Start MySQL as root user by: <code>sudo mysql -u root -p</code>, MySQL server status can be check by <code>service mariadb status</code></li>
+<li>Create new user for MyNote database: <code>create user 'name'@'localhost' IDENTIFIED BY 'PASSWORD'</code></li>
+<li>Set user privileges</li>
+</ol>
+<pre><code>-- grant all privilege
+GRANT all on *.* to 'username'@'localhost';
+-- revoke privilege
+REVOKE privilege ON databasename.tablename FROM 'username'@'host';
+-- apply
+FLUSH privileges;
+</code></pre>
+<h2 id="notice">Notice:</h2>
+<ul>
+<li>Username and password of the new account is needed for database connection configuration!</li>
+</ul>
+<h1 id="2-implement-mynote-on-apache">2. Implement MyNote On Apache</h1>
 <h2 id="steps-2">Steps:</h2>
 <ol>
-<li>Open configure file by: <code>sudo nano /etc/dhcpcd.conf</code></li>
-<li>Configure your stastic IP address：</li>
+<li>Install Apache server based on your platform.</li>
+<li>Put all project files under web root directory of Apache server. For example <code>.../htdocs/</code>.</li>
+<li>Configure <code>Functions/connect_db.php</code> for database connection.</li>
 </ol>
-<pre><code>   # Example static IP configuration:
-   #interface eth0              
-   #static ip_address=192.168.137.10
-   #static ip6_address=......
-   #static routers=192.168.1.1
-   #static domain_name_servers=192.168.1.1 8.8.8.8 .......
+<ul>
+<li>Configure storage path for upload files in:</li>
+</ul>
+<pre><code>//global variables config
+$upload_base='E://A/WorkShop/XAMPP/htdocs/www/MyNote/Storage/';//base path of upload file(such as file/photo)
+$read_base='Storage/';
 </code></pre>
-<ol start="3">
-<li>Restart net service by: <code>sudo service networking restart</code></li>
+<ul>
+<li>Configure username and password, change <code>$user</code> and <code>$passwd</code> as the new account.</li>
+</ul>
+<pre><code>//configure database
+$database_type='mysql';
+$name='system';//database name
+$user='root';
+$passwd='install';
+</code></pre>
+<h1 id="3-implement-mynote-on-nginx">3. Implement MyNote on Nginx</h1>
+<h2 id="steps-3">Steps:</h2>
+<ol>
+<li>Configure database as described in 2.3.</li>
+<li>Configure Nginx server. This part please refer to <a href="https://7more0.github.io/web-server-building-on-raspberrypinginxmysql/">Web Server Building On Raspberrypi (Nginx+MySQL)</a></li>
 </ol>
 
             </div>
             
               <div class="tag-container">
                 
-                  <a href="https://7more0.github.io/jia89nphh/" class="tag">
-                    Raspberrypi
+                  <a href="https://7more0.github.io/tvAnqZHjfY/" class="tag">
+                    MyNote
                   </a>
                 
               </div>
@@ -137,9 +169,9 @@ Remotely start xrdp service ..." />
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://7more0.github.io/raspberrypi-basic-configuration-and-system-installment/">
+                <a href="https://7more0.github.io/web-server-building-on-raspberrypinginxmysql/">
                   <h3 class="post-title">
-                    Raspberrypi Basic Configuration And System Installment
+                    Web Server Building On Raspberrypi (Nginx+MySQL)
                   </h3>
                 </a>
               </div>
